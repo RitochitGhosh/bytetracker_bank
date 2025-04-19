@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger("./log.txt"));
 
-app.use("/", userRouter);
+app.use("/api/", userRouter);
 
 
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
