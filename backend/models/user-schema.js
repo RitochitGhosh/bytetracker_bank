@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -42,7 +43,18 @@ const userSchema = new mongoose.Schema({
             }            
         }
     ]
-}, { timestamps: true })
+}, { timestamps: true });
+
+// userSchema.pre("save", async function () {
+//     if (!this.isModified("aadharId")) return;
+//     this.aadharId = await bcrypt.hash(this.aadharId, 10);
+// })
+
+// Hashing comes with its own problem, now user with same aadhar can be created multiple times
+
+// userSchema.methods.matchPasswords = function (aadhar) {
+//     return bcrypt.compare(aadhar, this.aadharId)
+// }
 
 const User = mongoose.model("user", userSchema);
 
