@@ -18,16 +18,18 @@ const handleGetUserByAaadhar = async (req, res) => {
   try {
     const { aadharId } = req.query;
 
+    console.log("Req Query: ", req.query);
+
     if (!aadharId) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "AadharId is required!",
       });
     }
 
     const targetedUser = await User.findOne({ aadharId });
 
-    if (!targetedUser) {
-      res.status(404).json({
+    if (targetedUser === null) {
+      return res.status(404).json({
         message: "User not found!",
       });
     }
@@ -42,33 +44,44 @@ const handleGetUserByAaadhar = async (req, res) => {
 };
 
 // POST "/api/" -> Pass fisrtName, lastName, aadharId in req.body to create a new user
-const handleCreateNewUser = async (req, res) => {
+const handleCreateNewUser  = async (req, res) => {
   try {
     const { firstName, lastName, aadharId } = req.body;
 
     if (!firstName || !lastName || !aadharId) {
       return res.status(400).json({
-        message: "Username & AadharId required!",
+        error: "First name, last name, and Aadhar ID are required.",
       });
     }
 
-    const newUser = await User.create({
-      firstName: firstName,
-      lastName: lastName,
-      aadharId: aadharId,
+    const existingUser  = await User.findOne({ aadharId });
+
+    if (existingUser ) {
+      return res.status(400).json({
+        error: "User  with this Aadhar ID already has a bank account!",
+      });
+    }
+
+    const newUser  = await User.create({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      aadharId: aadharId.trim(),
       total: 0,
       credits: [],
       debits: [],
     });
 
-    res.status(201).json({
-      message: "Successfully created a new user!"
+    console.log("Successfully created user...")
+
+    return res.status(201).json({
+      message: "Successfully created a new user!",
+      aadharId: newUser.aadharId,
     });
   } catch (error) {
-    console.error("Error _ handleCreateNewUser: ", error);
-    res.status(500).json({
-      message: "Internal server error!"
-    })
+    console.error("Error in handleCreateNew:User  ", error);
+    return res.status(500).json({
+      error: "Internal server error!",
+    });
   }
 };
 
