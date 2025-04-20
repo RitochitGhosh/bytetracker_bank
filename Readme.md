@@ -1,3 +1,5 @@
+# Team Members: Don't forget to `git pull` before starting to contribute.
+
 ## What is this for?
 
 - We are solving **Problem Code: WEB-002**, which intends to provide a solution for students (like Priya, as mentioned here), who have *strict budget contraint*. Basically, we aim to build an **expense tracker**.
