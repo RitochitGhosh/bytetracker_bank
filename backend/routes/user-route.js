@@ -6,7 +6,8 @@ const {
     handleAddMoney,
     handleDeductMoney,
     handleGetTotalMoney,
-    handleDeleteUserByAadhar
+    handleDeleteUserByAadhar,
+    handleFilterTransactions,
 } = require("../controllers/user-controller");
 
 const router = express.Router();
@@ -24,6 +25,7 @@ router
 router.get("/total", handleGetTotalMoney);
 router.post("/add-money", handleAddMoney);
 router.post("/deduct-money", handleDeductMoney);
+router.get("/filter-transactions", handleFilterTransactions);
 
 
 

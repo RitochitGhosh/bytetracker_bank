@@ -162,7 +162,9 @@ const handleGetTotalMoney = async (req, res) => {
       });
     }
 
-    res.status(200).json({ total: user.total });
+    const total = user.total;
+
+    res.status(200).json({ total });
   } catch (err) {
     console.error("Error _ handleGetTotalMoney: ", err);
     res.status(500).json({ 
@@ -201,6 +203,37 @@ const handleDeleteUserByAadhar = async (req, res) => {
   }
 };
 
+// GET "/api/filter-transactions?aadharId=xxxx...&after=Date.now()"
+const handleFilterTransactions = async (req, res) => {
+  try {
+    const { aadharId, after } = req.query;
+
+    if (!aadharId || !after) {
+      return res.status(400).json({ message: "Missing aadharId or after timestamp" });
+    }
+
+    const user = await User.findOne({ aadharId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found in bank database" });
+    }
+
+    const afterTimestamp = Number(after);
+
+    // Fix _
+    const filteredCredits = user.credits.filter((credit) => credit.timestamps > afterTimestamp);
+    const filteredDebits = user.debits.filter((debit) => debit.timestamps > afterTimestamp);
+
+    return res.status(200).json({
+      credits: filteredCredits,
+      debits: filteredDebits,
+    });
+
+  } catch (error) {
+    console.error("Error filtering transactions:", error.message);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+}
+
 module.exports = {
   handleGetAllUsers,
   handleGetUserByAaadhar,
@@ -209,4 +242,5 @@ module.exports = {
   handleDeductMoney,
   handleGetTotalMoney,
   handleDeleteUserByAadhar,
+  handleFilterTransactions
 };
